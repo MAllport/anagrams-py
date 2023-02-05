@@ -15,8 +15,7 @@ def generate(n: int):
     with open(f"dataset_{n}.csv", mode='w') as dataset_csv:
         writer = csv.DictWriter(dataset_csv, fieldnames=fieldnames)
         
-        for i in range(0, n//2): 
-            # n/4 since it generates an additional anagram string
+        for i in range(0, n//2):
             string_length = choice(range(char_start, char_start + char_range//2))
             gen_string = make_string(string_length)
             anagram_string = ''.join(sample(gen_string,len(gen_string)))
