@@ -5,10 +5,13 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
 from anagrams import Anagram, read_file_to_list
 
 anagram = Anagram(test_caller= True)
-target = anagram.naive_anagram_improved
+#target = anagram.naive_anagram
+#target = anagram.count_anagram
+target = anagram.count_anagram_improved
 
 class TestAnagram(unittest.TestCase):
     def assert_equal_unordered_2d_list(self, results, solutions):
+        print(results)
         self.assertEqual(len(results), len(solutions))
         for solution in solutions:
             solution_in_results = any(sorted(solution) == sorted(r)
@@ -35,6 +38,19 @@ class TestAnagram(unittest.TestCase):
     def test_only_duplicates(self):
         self.runner(filepath="../datasets/population_only_duplicates.txt", 
                solutions=[])
-
+    
+    def test_multiple_groups(self):
+        self.runner(filepath="../datasets/population_more_groups.txt", 
+               solutions=[["Kire", "Erik"], ["Elin", "Line"], 
+                          ["Stian", "Nista"]])
+    
+    def test_basecase(self):
+        self.runner(filepath="../datasets/population.txt", 
+               solutions=[['Elin','Line']])
+    
+    def test_basecase_long(self):
+        self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
+               solutions=[['Elin','Line']])
+    
 if __name__ == 'main':
     unittest.main()

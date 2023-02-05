@@ -18,7 +18,6 @@ Lire
 Kari
 Tor
 Anna
-
 Per
 Anette
 Tore
@@ -69,6 +68,7 @@ Rolf
 Berit
 Magne
 Ellen
+Kire
 Janne
 Svein
 Bjarte
