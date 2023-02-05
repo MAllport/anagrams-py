@@ -1,5 +1,8 @@
 
 class Anagram:
+    def __init__(self, test_caller):
+        self.test_caller = test_caller
+        
     def naive_anagram(self, words: list[str]):
         anagrams = {}
         for word in words:
@@ -10,11 +13,12 @@ class Anagram:
                 anagrams[s_word].append(word)
         result = [anagrams for anagrams in list(anagrams.values())
                 if len(anagrams) > 1]
-        for s in result:
-            print(" ".join(s))
+        if not self.test_caller:
+            for s in result:
+                print(" ".join(s))
         return result
 
-    def naive_anagram_improved(self, words: list[str]):
+    def naive_anagram_improved(self, words: list[str], test_caller=True):
         anagrams = {}
         for word in words:
             s_word = "".join(sorted(word.lower()))
@@ -24,8 +28,9 @@ class Anagram:
                 anagrams[s_word] = [word]
         result = [anagrams for anagrams in list(anagrams.values())
                 if len(anagrams) > 1]
-        for s in result:
-            print(" ".join(s))
+        if not self.test_caller:
+            for s in result:
+                print(" ".join(s))
         return result
 
 def read_file_to_list(file_path):
@@ -35,5 +40,5 @@ def read_file_to_list(file_path):
 
 if __name__ == "__main__":
     file_path = '../datasets/population.txt'
-    a = Anagram()
+    a = Anagram(test_caller = False)
     a.naive_anagram_case_sensitive_unique(read_file_to_list(file_path))
