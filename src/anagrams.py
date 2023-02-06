@@ -164,9 +164,12 @@ def read_file_to_list(file_path: str) -> List[str]:
     return words
 
 if __name__ == "__main__":
-    file_path = '../datasets/small_population.txt'
+    file_path = '../datasets/population.txt'
     data = read_file_to_list(file_path)
-    result = SolveAnagram.count_anagram_counter(data)
+    
+    #result = SolveAnagram.count_anagram_counter(data)
+    #result = SolveAnagram.count_anagram(data)
+    result = SolveAnagram.sorted_anagram(data)
     
     for s in result:
         print(" ".join(s))
