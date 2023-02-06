@@ -1,6 +1,9 @@
 # anagrams-py
 
 A program that finds anagrams given an input file of words, with tests to check for correctness and efficiency
+There are three implemented algorithms to solve anagrams - they can be changed in runner() in test.py if running tests, or in the bottom of the anagrams.py file if running directly
+Tests can be run from inside test/ with `python3 -m unittest`
+Requires Python 3.10 or newer
 
 
 Running times of different implementations given a dataset
