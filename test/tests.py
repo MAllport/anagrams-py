@@ -2,13 +2,8 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
-from anagrams import Anagram, read_file_to_list
+from anagrams import SolveAnagram, read_file_to_list
 from typing import List
-
-anagram = Anagram(stdout= False)
-#target = anagram.sorted_anagram
-#target = anagram.count_anagram
-target = anagram.count_anagram_improved
 
 class TestAnagram(unittest.TestCase):
     """Class that holds tests for the implementations
@@ -16,11 +11,19 @@ class TestAnagram(unittest.TestCase):
     Args:
         unittest (_type_): "unittest" library base class
     """
+    
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Ran only once before the tests are run. Sets the target
+        implementation to test
+        """
+        #cls.target = SolveAnagram.sorted_anagram
+        #cls.target = SolveAnagram.count_anagram
+        cls.target = SolveAnagram.count_anagram_counter
+    
     def assert_equal_unordered_2d_list(self, results: List[List[str]],
                                        solutions: List[List[str]]) \
                                            -> None:
-        print(solutions)
-        print(results)
         """Asserts whether two 2D lists are equal when both the outer and inner
         elements are not in the same order. This is because the anagram 
         implementations do not guarantee any specific ordering of anagrams.
@@ -46,7 +49,8 @@ class TestAnagram(unittest.TestCase):
         for solution in solutions:
             solution_in_results = any(sorted(solution) == sorted(r)
                                       for r in results)
-            self.assertTrue(solution_in_results)
+            self.assertTrue(solution_in_results,
+                        msg="Implementation is either incomplete or incorrect")
     
     def runner(self, filepath: str, solutions: List[List[str]]) -> None:
         """Runs the tests given a file path to a dataset and the solution
@@ -56,7 +60,7 @@ class TestAnagram(unittest.TestCase):
             solutions (List[List[str]]): Anagram solutions to the dataset
         """
         data = read_file_to_list(filepath)
-        result = target(data)
+        result = self.target(data)
         self.assert_equal_unordered_2d_list(result,solutions)
     
     """--- START OF TESTS ---"""
@@ -99,9 +103,9 @@ class TestAnagram(unittest.TestCase):
         self.runner(filepath="../datasets/population.txt", 
                solutions=[['Elin','Line']])
     
-    #def test_basecase_long(self):
-    #    self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
-    #           solutions=[['Elin','Line']])
+    def test_basecase_long(self):
+        self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
+               solutions=[['Elin'*100,'Line'*100]])
     
 if __name__ == 'main':
     unittest.main()
