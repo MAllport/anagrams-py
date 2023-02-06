@@ -2,18 +2,10 @@ from collections import defaultdict, Counter
 from typing import List, DefaultDict
 
 
-class Anagram:
+class SolveAnagram:
     """The class holds all algorithmic implementations of solving the
     anagram problem, as well as helper methods
     """
-    def __init__(self, stdout: bool):
-        """Determines whether algorithms will write to standard output. 
-        Should be "false" during tests.
-
-        Args:
-            stdout (bool): Writes results to standard output if "true"
-        """
-        self.stdout = stdout
     
     @staticmethod
     def nor_ord(c: str) -> int:
@@ -36,8 +28,9 @@ class Anagram:
             case _:
                 alphabet_ordinal = ord(c) - ord('a')
         return alphabet_ordinal
-
-    def sorted_anagram(self, words: List[str]) -> List[List[str]]:
+    
+    @staticmethod
+    def sorted_anagram(words: List[str]) -> List[List[str]]:
         """Finds and groups anagrams from a list of words. Uses the fact that
         two words are anagrams when their sorted
 
@@ -56,12 +49,29 @@ class Anagram:
         
         result = [anagrams for anagrams in list(anagrams.values())
                 if len(anagrams) > 1]
-        if self.stdout:
-            for s in result:
-                print(" ".join(s))
+        
         return result
     
-    def count_anagram(self, words: List[str]) -> List[List[str]]:
+    """ Big-O analysis of sorted_anagram()
+    N is the number of words and S is the size of the longest string
+    
+    Time complexity  = O(N S log(S))
+    Space complexity = O(N S)
+    
+    The program does one pass over all the words, yielding a time complexity
+    of O(N), and for every entry we sort the string. 
+    sorted() uses Timsort, which has a worst-case time complexity of O(S log(S))
+    We also lookup in the dictionary, which is O(1)
+    In the end we also make one final pass over the dictionary, which has
+    O(N) time complexity.
+    The final time complexity is: O(N S log(S)) + O(N) = O(N S log(S))
+    
+    The worst-case space complexity is O(N S), because the algorithm
+    stores all the strings in the dictionary
+    """
+    
+    @staticmethod
+    def count_anagram(words: List[str]) -> List[List[str]]:
         """Finds and groups anagrams from a list of words. Uses the fact that
         two words with the same character counts are anagrams
 
@@ -75,19 +85,33 @@ class Anagram:
         for word in words:
             counts = [0] * 29 # Norwegian alphabet
             for c in word.lower():
-                counts[Anagram.nor_ord(c)] += 1
-            key = tuple(counts)
+                counts[SolveAnagram.nor_ord(c)] += 1
+            key = tuple(counts) # Convert to tuple to be hashable
             if word not in anagrams[key]:
                 anagrams[key].append(word)
         
         result = [anagrams for anagrams in list(anagrams.values())
                 if len(anagrams) > 1]
-        if self.stdout:
-            for s in result:
-                print(" ".join(s))
+
         return result
     
-    def count_anagram_improved(self, words: List[str]) -> List[List[str]]:
+    """ Big-O analysis of count_anagram()
+    N is the number of words and S is the size of the longest string
+    
+    Time complexity  = O(N S)
+    Space complexity = O(N S)
+    
+    The program does one pass over all the words, yielding a time complexity
+    of O(N), and for every entry we count the character occurences in the word,
+    and convert the counts to a tuple, both operations have O(S) time complexity
+    The final time complexity is: O(N S) + O(N) = O(N S)
+    
+    The worst-case space complexity is O(N S), because the algorithm
+    stores all the strings in the dictionary
+    """
+    
+    @staticmethod
+    def count_anagram_counter(words: List[str]) -> List[List[str]]:
         """Finds and groups anagrams from a list of words. Uses the fact that
         two words with the same character counts are anagrams.
         In contrast to "count_anagram()", this method uses the "Counter"
@@ -101,16 +125,29 @@ class Anagram:
         """
         anagrams: DefaultDict[tuple, list] = defaultdict(list)
         for word in words:
-            key = tuple(Counter(word.lower()))
+            key = frozenset(Counter(word.lower()).items())
             if word not in anagrams[key]:
                 anagrams[key].append(word)
         
         result = [anagrams for anagrams in list(anagrams.values())
                 if len(anagrams) > 1]
-        if self.stdout:
-            for s in result:
-                print(" ".join(s))
+        
         return result
+    
+    """ Big-O analysis of count_anagram_counter()
+    N is the number of words and S is the size of the longest string
+    
+    Time complexity  = O(N S)
+    Space complexity = O(N S)
+    
+    The program does one pass over all the words, yielding a time complexity
+    of O(N), and for every entry Counter() counts the character occurences in
+    the word, and convert to a frozenset(), both with O(S) time complexity
+    The final time complexity is: O(N S) + O(N) = O(N S)
+    
+    The worst-case space complexity is O(N S), because the algorithm
+    stores all the strings in the dictionary
+    """
 
 def read_file_to_list(file_path: str) -> List[str]:
     """Reads a text file into a list, with newlines as a separator
@@ -127,6 +164,9 @@ def read_file_to_list(file_path: str) -> List[str]:
     return words
 
 if __name__ == "__main__":
-    file_path = '../datasets/population.txt'
-    a = Anagram(stdout = True)
-    a.count_anagram_improved(read_file_to_list(file_path))
+    file_path = '../datasets/small_population.txt'
+    data = read_file_to_list(file_path)
+    result = SolveAnagram.count_anagram_counter(data)
+    
+    for s in result:
+        print(" ".join(s))

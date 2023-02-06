@@ -13,15 +13,6 @@ class TestAnagram(unittest.TestCase):
         unittest (_type_): "unittest" library base class
     """
     
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Ran only once before the tests are run. Sets the target
-        implementation to test
-        """
-        #cls.target = SolveAnagram.sorted_anagram
-        cls.target = SolveAnagram.count_anagram
-        #cls.target = SolveAnagram.count_anagram_counter
-    
     def assert_equal_unordered_2d_list(self, results: List[List[str]],
                                        solutions: List[List[str]]) \
                                            -> None:
@@ -48,8 +39,9 @@ class TestAnagram(unittest.TestCase):
         """
         self.assertEqual(len(results), len(solutions))
         for solution in solutions:
-            solution_in_results = any(sorted(solution) == sorted(r)
-                                      for r in results)
+            solution_in_results = any(
+                sorted(solution) == sorted(r) for r in results)
+            
             self.assertTrue(solution_in_results,
                         msg="Implementation is either incomplete or incorrect")
     
@@ -63,10 +55,15 @@ class TestAnagram(unittest.TestCase):
         Returns:
             int: Time to run in seconds
         """
+        
         data = read_file_to_list(filepath)
         
+        target = SolveAnagram.sorted_anagram
+        #target = SolveAnagram.count_anagram
+        #target = SolveAnagram.count_anagram_counter
+        
         start_time = time()
-        result = self.target(data)
+        result = target(data)
         end_time = time()
         
         self.assert_equal_unordered_2d_list(result,solutions)
@@ -115,14 +112,22 @@ class TestAnagram(unittest.TestCase):
     
     def test_basecase_big_n(self) -> None:
         """Tests a dataset with large number of entries
-        
         """
-        #self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
-        #       solutions=[['Elin'*100,'Line'*100]])
         time = round(self.runner(filepath="../datasets/population_10000000.txt", 
                solutions=[['Elin','Line']]), 4)
-        print(time)
         
+        self.assertGreater(30, time, 
+                           msg="Dataset is too big or algorithm unoptimized")
+        
+    def test_basecase_long_strings(self) -> None:
+        """Tests a dataset with a small number of entries but long strings
+        """
+        time = round(self.runner(
+            filepath="../datasets/100000x_chars_population.txt", 
+            solutions=[['Elin'*100000,'Line'*100000]]), 4)
+        
+        self.assertGreater(30, time, 
+                           msg="Dataset is too big or algorithm unoptimized")
         
 if __name__ == 'main':
     unittest.main()
