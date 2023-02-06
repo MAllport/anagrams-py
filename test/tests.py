@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../src")
 from anagrams import SolveAnagram, read_file_to_list
 from typing import List
+from time import time
 
 class TestAnagram(unittest.TestCase):
     """Class that holds tests for the implementations
@@ -18,8 +19,8 @@ class TestAnagram(unittest.TestCase):
         implementation to test
         """
         #cls.target = SolveAnagram.sorted_anagram
-        #cls.target = SolveAnagram.count_anagram
-        cls.target = SolveAnagram.count_anagram_counter
+        cls.target = SolveAnagram.count_anagram
+        #cls.target = SolveAnagram.count_anagram_counter
     
     def assert_equal_unordered_2d_list(self, results: List[List[str]],
                                        solutions: List[List[str]]) \
@@ -52,16 +53,25 @@ class TestAnagram(unittest.TestCase):
             self.assertTrue(solution_in_results,
                         msg="Implementation is either incomplete or incorrect")
     
-    def runner(self, filepath: str, solutions: List[List[str]]) -> None:
+    def runner(self, filepath: str, solutions: List[List[str]]) -> int:
         """Runs the tests given a file path to a dataset and the solution
 
         Args:
             filepath (str): File path to a dataset
             solutions (List[List[str]]): Anagram solutions to the dataset
+        
+        Returns:
+            int: Time to run in seconds
         """
         data = read_file_to_list(filepath)
+        
+        start_time = time()
         result = self.target(data)
+        end_time = time()
+        
         self.assert_equal_unordered_2d_list(result,solutions)
+        
+        return end_time - start_time
     
     """--- START OF TESTS ---"""
         
@@ -103,9 +113,16 @@ class TestAnagram(unittest.TestCase):
         self.runner(filepath="../datasets/population.txt", 
                solutions=[['Elin','Line']])
     
-    def test_basecase_long(self):
-        self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
-               solutions=[['Elin'*100,'Line'*100]])
-    
+    def test_basecase_big_n(self) -> None:
+        """Tests a dataset with large number of entries
+        
+        """
+        #self.runner(filepath="../datasets/100x_chars_population_100000.txt", 
+        #       solutions=[['Elin'*100,'Line'*100]])
+        time = round(self.runner(filepath="../datasets/population_10000000.txt", 
+               solutions=[['Elin','Line']]), 4)
+        print(time)
+        
+        
 if __name__ == 'main':
     unittest.main()
